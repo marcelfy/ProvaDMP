@@ -1,12 +1,13 @@
 import React, { useState}from 'react'
 import CardDadosTempo from '../../components/CardDadosTempo/CardDadosTempo';
 import Styles from './PrevisaoDoTempoBrasil.module.css'
-import {Button} from 'antd'
+import {Button, Spin} from 'antd'
 
 const PrevisaoDoTempoBrasil = () => {
 
   const [cidade, setCidade] = useState()
   const [visible, setVisible] = useState(true)
+  const [loading, setLoading] = useState(false)
   const estados = [
     { "capital": "Rio Branco" },
     { "capital": "Maceio" },
@@ -44,7 +45,7 @@ const PrevisaoDoTempoBrasil = () => {
   }
 
   function start ()  {
-      setVisible(false)
+      setLoading(true)
       const API_KEY = '4d8fb5b93d4af21d66a2948710284366'
       const cidade = estados[gerarNumeroAleatorio(0, estados.length)].capital
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt`
@@ -54,10 +55,11 @@ const PrevisaoDoTempoBrasil = () => {
           const icon = `https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/${weather[0].icon}.svg`
           setCidade(<CardDadosTempo icon={icon} temperatura={main.temp} umidade={main.humidity} sensacaoTermica={main.feels_like} 
             pais={sys.country} cidade={name} descricao={weather[0]?.description} pressao={main.pressure} vento={wind}/>)
-        })
+        }).finally(()=>setLoading(false))
   }
 
    function sortear(){
+    setVisible(false)
     setInterval(() => {
        start()
     }, 5000);
@@ -65,12 +67,15 @@ const PrevisaoDoTempoBrasil = () => {
 
 
   return (
+      <Spin spinning={loading}>
     <div className={Styles.container}>
       <h2>Previsão do tempo Para o Brasil</h2>
       {cidade}
-      {visible? <h3>Clique no botão para ver a previsão do tempo em todas as capitais do Brasil</h3>: "" }
+      {visible? <h3>Clique no botão para ver a previsão do tempo em todas as capitais do Brasil</h3>: ""}
+      {visible ===  false ? <p>Carregando...</p>: ""}
       <Button onClick={sortear} type='primary'>Começar</Button>      
     </div>
+      </Spin>
   )
 }
 
