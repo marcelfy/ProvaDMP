@@ -12,7 +12,7 @@ const PrevisaoDoTempo = () => {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${values.cidade}&appid=${API_KEY}&units=metric&lang=pt`
     fetch(url).then((resp) => resp.json())
       .then((data) => {
-        if(data.cod == "404"){
+        if(data.cod === "404"){
           message.error("Cidade não encontrada ou inválida!")
           return;
         }

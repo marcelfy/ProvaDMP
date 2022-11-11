@@ -57,7 +57,6 @@ const PrevisaoDoTempoBrasil = () => {
         })
   }
 
-
    function sortear(){
     setInterval(() => {
        start()
